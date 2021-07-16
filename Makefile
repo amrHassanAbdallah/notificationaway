@@ -11,8 +11,6 @@ generate:
 	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen
 	@echo :: generating code
 
-
-	(cd ./persistence && sqlc generate)
 	oapi-codegen -package api -generate chi-server,types api/api.yml > api/api.gen.go
 	oapi-codegen -package client -generate client,types api/api.yml > client/client.gen.go
 
