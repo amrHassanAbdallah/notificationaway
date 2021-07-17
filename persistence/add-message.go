@@ -7,7 +7,6 @@ import (
 )
 
 func (m *MongoAdapter) AddMessage(ctx context.Context, message Message) (*Message, error) {
-	message.generateID()
 	_, err := m.MessagesCollection.InsertOne(ctx, message)
 	if err != nil {
 		var e mongo.WriteException

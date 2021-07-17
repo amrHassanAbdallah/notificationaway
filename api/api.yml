@@ -46,6 +46,7 @@ components:
           enum: [ SMS, Push ]
       required:
         - template
+        - template_keys
         - type
         - language
         - provider_type

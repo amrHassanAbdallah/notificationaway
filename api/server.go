@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/amrHassanAbdallah/notificationaway/persistence"
 	"github.com/amrHassanAbdallah/notificationaway/service"
 	"github.com/amrHassanAbdallah/notificationaway/utils"
@@ -17,17 +16,8 @@ type server struct {
 	NotificationawayService *service.Service
 }
 
-func (u *NewMessage) toServiceMessage() (*persistence.Message, error) {
-	errorMsg := "invalid message object format"
-	jsonbody, err := json.Marshal(u)
-	if err != nil {
-		return nil, fmt.Errorf(errorMsg)
-	}
-	val := persistence.Message{}
-	if err := json.Unmarshal(jsonbody, &val); err != nil {
-		return nil, fmt.Errorf(errorMsg)
-	}
-	return &val, nil
+func (u *NewMessage) toServiceMessage() *persistence.Message {
+	return persistence.NewMessage(u.Language, u.ProviderType, u.Template, u.Type, u.TemplateKeys)
 }
 func (s server) AddMessage(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -40,16 +30,8 @@ func (s server) AddMessage(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	serviceEntity, err := nentity.toServiceMessage()
-	if err != nil {
-		HandleError(w, r, &ValidationError{
-			Cause:  err,
-			Detail: nil,
-			Status: http.StatusBadRequest,
-		})
-		return
-	}
-	err = utils.Validator.Struct(serviceEntity)
+	serviceEntity := nentity.toServiceMessage()
+	err := utils.Validator.Struct(serviceEntity)
 	if err != nil {
 		HandleError(w, r, &ValidationError{
 			Cause:  err,

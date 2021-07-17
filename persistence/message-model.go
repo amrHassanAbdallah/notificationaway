@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/satori/go.uuid"
 	"go.mongodb.org/mongo-driver/x/bsonx"
+	"time"
 )
 
 type MessagesDB struct{}
@@ -39,6 +40,18 @@ func (a MessagesDB) Indexes() []Index {
 	}
 }
 
+func NewMessage(lang, providerType, template, mtype string, templateKeys []string) *Message {
+	m := Message{
+		Language:     lang,
+		ProviderType: providerType,
+		Template:     template,
+		TemplateKeys: templateKeys,
+		Type:         mtype,
+		CreatedAt:    time.Now(),
+	}
+
+	return &m
+}
 func (m *Message) generateID() *Message {
 	m.Id = uuid.NewV5(uuid.UUID{}, fmt.Sprintf("%s_%s", m.Type, m.Language)).String()
 	return m

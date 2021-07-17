@@ -26,7 +26,7 @@ type Error struct {
 // MessageResponse defines model for MessageResponse.
 type MessageResponse struct {
 	// Embedded struct due to allOf(#/components/schemas/NewMessage)
-	NewMessage
+	NewMessage `yaml:",inline"`
 	// Embedded fields due to inline allOf schema
 
 	// timestamp full-date - RFC3339
@@ -43,8 +43,8 @@ type NewMessage struct {
 	ProviderType string `json:"provider_type"`
 
 	// Message content
-	Template     string    `json:"template"`
-	TemplateKeys *[]string `json:"template_keys,omitempty"`
+	Template     string   `json:"template"`
+	TemplateKeys []string `json:"template_keys"`
 
 	// will be used as part of the uniqunes of the message for example type could be greetings, driver arrived,...etc
 	Type string `json:"type"`
