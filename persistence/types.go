@@ -30,6 +30,15 @@ func (nc *WriteOperationFailure) Error() string {
 	return nc.details
 }
 
+type ErrRecordNotFound struct {
+	entity string
+	Id     string
+}
+
+func (nc *ErrRecordNotFound) Error() string {
+	return fmt.Sprintf("%s with id %s not found", nc.entity, nc.Id)
+}
+
 // NewMessage defines model for NewMessage.
 type Message struct {
 	Id           string `json:"id" bson:"_id"`

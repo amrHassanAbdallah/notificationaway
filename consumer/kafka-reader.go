@@ -53,15 +53,13 @@ func (k *KafkaHandler) Close() error {
 }
 
 type WorkerConfig struct {
-	KafkaConfig         kafka.ReaderConfig
 	MessageBrokerReader MessageBrokerReadInterface
-	EventMessageHandler NotificationEventHandler
+	EventMessageHandler *NotificationEventHandler
 	RequestTimeOut      time.Duration
 	MaxRetriesOnFailure int
 }
 
-func HandleKafkaMessages(ctx context.Context, workerName string, s *sync.WaitGroup, config WorkerConfig) {
-	jobKey := workerName
+func HandleKafkaMessages(ctx context.Context, s *sync.WaitGroup, config WorkerConfig) {
 	m := new(kafka.Message)
 	var err error
 	currRetries := 0
@@ -115,7 +113,7 @@ outer:
 					if err != nil {
 						switch err.(type) {
 						case *ErrUnrecoverableMsgHandling:
-							logger.Warnw("skipping failure in handling the message, because :"+err.Error(), "job-key", jobKey, "msg-topic", m.Topic, "msg-partition", m.Partition, "msg-offset", m.Offset)
+							logger.Warnw("skipping failure in handling the message, because :"+err.Error(), "msg-topic", m.Topic, "msg-partition", m.Partition, "msg-offset", m.Offset)
 							kctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 							err = config.MessageBrokerReader.CommitOffset(kctx, []kafka.Message{*m})
 							cancel()
@@ -150,7 +148,7 @@ outer:
 				m = nil
 				logger.Debugw("time it took to commit the kafka offset", "time-it-took-in-s", time.Now().Sub(timeN2).Seconds())
 			}
-			logger.Debugw("finished processing", "job-key", jobKey, "is-job-succeeded", err == nil, "total-time-it-took-in-s", time.Now().Sub(timeN).Seconds())
+			logger.Debugw("finished processing", "is-job-succeeded", err == nil, "total-time-it-took-in-s", time.Now().Sub(timeN).Seconds())
 		}
 	}
 

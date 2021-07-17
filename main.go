@@ -2,10 +2,12 @@ package notificationaway
 
 import (
 	"github.com/amrHassanAbdallah/notificationaway/api"
+	"github.com/amrHassanAbdallah/notificationaway/consumer"
 	"github.com/amrHassanAbdallah/notificationaway/persistence"
 	"github.com/amrHassanAbdallah/notificationaway/service"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/segmentio/kafka-go"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -13,6 +15,7 @@ import (
 	"os"
 	"os/signal"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 )
@@ -42,6 +45,11 @@ func main() {
 
 		RequestTimeOut int
 		Listen         string
+
+		KafkaBroker        string
+		KafkaConsumerGroup string
+		KafkaTopic         string
+		RunConsumer        bool
 	)
 	app := cli.NewApp()
 	app.Version = "0.0.1"
@@ -95,6 +103,31 @@ func main() {
 			Value:       ":7981",
 			Destination: &Listen,
 		},
+
+		&cli.StringFlag{
+			Name:        "kafka-brokers",
+			Usage:       "kafka brokers DSN comma separated",
+			Value:       "localhost:9092",
+			Destination: &KafkaBroker,
+		},
+		&cli.StringFlag{
+			Name:        "kafka-consumer-group",
+			Usage:       "kafka consumer group",
+			Value:       "notificationaway-consumer",
+			Destination: &KafkaConsumerGroup,
+		},
+		&cli.StringFlag{
+			Name:        "kafka-topic",
+			Usage:       "kafka topic",
+			Value:       "notifications",
+			Destination: &KafkaTopic,
+		},
+		&cli.BoolFlag{
+			Name:        "run-consumer",
+			Usage:       "to run the kafka consumer",
+			Value:       true,
+			Destination: &RunConsumer,
+		},
 	}
 
 	app.Action = func(context *cli.Context) error {
@@ -144,6 +177,33 @@ func main() {
 			}
 		}()
 		logger.Infof("server started on port %v", Listen)
+
+		if RunConsumer {
+			var wg sync.WaitGroup
+			kbrokers := make([]string, 0)
+			if strings.Contains(KafkaBroker, ",") {
+				kbrokers = strings.Split(KafkaBroker, ",")
+			} else {
+				kbrokers = append(kbrokers, DBHost)
+			}
+			kafkaReader := &consumer.KafkaHandler{Reader: kafka.NewReader(kafka.ReaderConfig{
+				Brokers:     kbrokers,
+				GroupID:     KafkaConsumerGroup,
+				Topic:       KafkaTopic,
+				MinBytes:    1,
+				MaxBytes:    100e6, // 100MB
+				ErrorLogger: &consumer.ErrLoggerWrapper{Logger: logger},
+				Logger:      &consumer.DebLoggerWrapper{Logger: logger}},
+			)}
+			wconfig := consumer.WorkerConfig{
+				MessageBrokerReader: kafkaReader,
+				EventMessageHandler: consumer.NewNotificationEventHandler(persistence.ReadLayerInterface(persistenceLayer)),
+				RequestTimeOut:      30 * time.Second,
+				MaxRetriesOnFailure: 3,
+			}
+			wg.Add(1)
+			go consumer.HandleKafkaMessages(mctx, &wg, wconfig)
+		}
 
 		<-done
 		logger.Info("server terminating...")
