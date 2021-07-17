@@ -6,7 +6,11 @@ import (
 	"time"
 )
 
+type ReadLayerInterface interface {
+	GetMessage(ctx context.Context, Id string) (*Message, error)
+}
 type PersistenceLayerInterface interface {
+	ReadLayerInterface
 	AddMessage(ctx context.Context, message Message) (*Message, error)
 }
 
