@@ -18,6 +18,14 @@ func (nc *DuplicateEntityException) Error() string {
 	return fmt.Sprintf("duplicate %s", nc.entity)
 }
 
+type WriteOperationFailure struct {
+	details string
+}
+
+func (nc *WriteOperationFailure) Error() string {
+	return nc.details
+}
+
 // NewMessage defines model for NewMessage.
 type Message struct {
 	Id           string `json:"id" bson:"_id"`
