@@ -1,7 +1,8 @@
 package persistence
 
 import (
-	"github.com/google/uuid"
+	"fmt"
+	"github.com/satori/go.uuid"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
@@ -39,7 +40,7 @@ func (a MessagesDB) Indexes() []Index {
 }
 
 func (m *Message) generateID() *Message {
-	m.Id = uuid.New().String()
+	m.Id = uuid.NewV5(uuid.UUID{}, fmt.Sprintf("%s_%s", m.Type, m.Language)).String()
 	return m
 
 }
