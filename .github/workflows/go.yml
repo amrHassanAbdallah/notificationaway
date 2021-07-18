@@ -25,5 +25,7 @@ jobs:
       run: make generate
     - name: build
       run: make build
+    - name: run
+      run: ./bin/app 
     - name: Test
       run: make test
