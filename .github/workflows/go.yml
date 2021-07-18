@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongo:
-        image: bitnami/mongodb:4.2
+        image: mongo
+        ports:
+          - 27017/tcp
         
     steps:
     - uses: actions/checkout@v2
