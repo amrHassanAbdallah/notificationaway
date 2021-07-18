@@ -25,6 +25,8 @@ jobs:
       run: make generate
     - name: build
       run: make build
+    - name: list files
+      run: ls -l ./bin
     - name: update permissions
       run: chmod 775 ./bin/app
     - name: run
