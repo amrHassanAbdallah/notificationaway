@@ -28,7 +28,7 @@ jobs:
     - name: update permissions
       run: |
         ls -l ./
-        chmod +x /bin/app
+        chmod +x ./bin/app
     - name: run
       run:  ./bin/app
     - name: Test
