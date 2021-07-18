@@ -51,9 +51,9 @@ func NewPersistenceLayer(urls []string, user, password, dbName string, extraArgs
 		}
 
 		if val, k := extraArgs["replicaset"]; k && val != nil {
-			val := val.(string)
+			val := val.(*string)
 			clientOptions.Hosts = urls
-			clientOptions.SetReplicaSet(val)
+			clientOptions.ReplicaSet = val
 			readPref, err := readpref.New(mode)
 			if err != nil {
 				return nil, err

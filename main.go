@@ -1,4 +1,4 @@
-package notificationaway
+package main
 
 import (
 	"github.com/amrHassanAbdallah/notificationaway/api"
@@ -83,7 +83,7 @@ func main() {
 		&cli.IntFlag{
 			Name:        "db-connection-timeout",
 			Usage:       "timeout the db connection after how many seconds",
-			Value:       5,
+			Value:       2,
 			Destination: &DBConnectionTimeOut,
 		},
 		&cli.StringFlag{
