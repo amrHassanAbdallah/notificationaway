@@ -30,6 +30,6 @@ jobs:
         ls -l ./
         chmod +x ./bin/app
     - name: run
-      run:  ./bin/app
+      run:  ./bin/app &
     - name: Test
       run: make test
