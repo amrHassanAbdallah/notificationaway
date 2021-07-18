@@ -43,7 +43,7 @@ func (nc *ErrRecordNotFound) Error() string {
 type Message struct {
 	Id           string `json:"id" bson:"_id"`
 	Language     string `json:"language" bson:"language" validate:"required,oneof=en ar"`
-	ProviderType string `json:"provider_type" bson:"provider_type" validate:"required,oneof=sms push"`
+	ProviderType string `json:"provider_type" bson:"provider_type" validate:"required,oneof=sms push webhook"`
 
 	// Message content
 	Template     string   `json:"template" bson:"template" validate:"required,gte=5"`

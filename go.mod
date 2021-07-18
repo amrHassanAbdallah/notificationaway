@@ -3,6 +3,7 @@ module github.com/amrHassanAbdallah/notificationaway
 go 1.15
 
 require (
+	github.com/confluentinc/confluent-kafka-go v1.7.0
 	github.com/deepmap/oapi-codegen v1.4.2
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/render v1.0.1

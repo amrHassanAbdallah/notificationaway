@@ -38,7 +38,7 @@ func (n *NotificationEventHandler) Handle(ctx context.Context, msg map[string]in
 			return err
 		}
 	}
-	sender, err := proxy.GetSender(message.Type)
+	sender, err := proxy.GetSender(message.ProviderType)
 	if err != nil {
 		return &ErrUnrecoverableMsgHandling{Message: err.Error()}
 	}

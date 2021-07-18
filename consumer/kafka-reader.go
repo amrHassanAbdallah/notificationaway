@@ -1,7 +1,9 @@
 package consumer
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
@@ -103,7 +105,12 @@ outer:
 				if !isMsgHandled {
 					timeN2 = time.Now()
 					formattedMessage := map[string]interface{}{}
-
+					decoder := json.NewDecoder(bytes.NewReader(m.Value))
+					if err = decoder.Decode(&formattedMessage); err != nil {
+						logger.Warnw("failed to cast message", "msg-topic", m.Topic, "msg-partition", m.Partition, "msg-offset", m.Offset, "err", err)
+						err = nil
+						continue
+					}
 					for _, msgHeader := range m.Headers {
 						formattedMessage[string(msgHeader.Key)] = string(msgHeader.Value)
 					}
