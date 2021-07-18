@@ -13,9 +13,6 @@ jobs:
       mongo:
         image: bitnami/mongodb:4.2
         
-  build:
-    needs: runner-job
-    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
 
@@ -28,10 +25,5 @@ jobs:
       run: make generate
     - name: build
       run: make build
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
     - name: Test
       run: make test
