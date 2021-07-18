@@ -49,8 +49,7 @@ func NewMessage(lang, providerType, template, mtype string, templateKeys []strin
 		Type:         mtype,
 		CreatedAt:    time.Now(),
 	}
-
-	return &m
+	return m.generateID()
 }
 func (m *Message) generateID() *Message {
 	m.Id = uuid.NewV5(uuid.UUID{}, fmt.Sprintf("%s_%s", m.Type, m.Language)).String()

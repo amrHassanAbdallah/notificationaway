@@ -1,5 +1,5 @@
 # Specify the version of Go to use
-FROM golang:1.13
+FROM golang:1.16
 
 # Copy all the files from the host into the container
 WORKDIR /src
@@ -12,5 +12,6 @@ ENV GO111MODULE=on
 RUN make generate
 RUN make build
 
+
 # Specify the container's entrypoint as the action
-ENTRYPOINT ["/bin/app"]
+ENTRYPOINT ["./bin/app"]

@@ -27,7 +27,7 @@ Use this [file](https://github.com/amrHassanAbdallah/notificationaway/blob/maste
 ## Features
 * [x] Add a message
 * [x] Consume notification
-* [x] Send notifications
+* [x] Send notifications (webhook type)
 * [x] Add Light size integration test
 * [ ] Update a message
 * [ ] Query messages

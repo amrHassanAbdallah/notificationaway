@@ -147,11 +147,20 @@ func main() {
 		if err != nil {
 			logger.Fatalw("failed to initiate persistence layer", "err", err)
 		}
-		err = persistenceLayer.Connect(mctx)
+		for i := 1; i < 5; i++ {
+			err = persistenceLayer.Connect(mctx)
+			if err != nil {
+				logger.Errorw("failed to connect to persistence layer", "err", err)
+				time.Sleep(time.Duration(i) * time.Second)
+				continue
+			}
+			logger.Info("connection with mongodb has been established")
+			break
+
+		}
 		if err != nil {
 			logger.Fatalw("failed to connect to persistence layer", "err", err)
 		}
-		logger.Info("connection with mongodb has been established")
 
 		notificationawayService := service.NewService(persistenceLayer)
 
