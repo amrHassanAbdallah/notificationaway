@@ -36,5 +36,4 @@ jobs:
     - name: test
       run: |
         cd test
-        go build -o test
-        ./test
+        go run test.go

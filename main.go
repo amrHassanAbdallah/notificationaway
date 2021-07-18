@@ -162,6 +162,9 @@ func main() {
 			r.Use(middleware.Timeout(time.Duration(RequestTimeOut) * time.Second))
 			api.HandlerFromMux(server, r)
 		})
+		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		})
 		srv := &http.Server{
 			Handler: r,
 			Addr:    Listen,
