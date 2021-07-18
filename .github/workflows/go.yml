@@ -20,13 +20,16 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: 1.16
-    - name: list files
-      run: ls -l ./
+
+    - name: generate
+      run: make generate
+    - name: build
+      run: make build
     - name: update permissions
-      run: chmod 775 ./bin/app
+      run: |
+        ls -l ./
+        chmod +x /bin/app
     - name: run
-      runs:
-        using: docker
-        image: Dockerfile
+      run:  ./bin/app
     - name: Test
       run: make test
