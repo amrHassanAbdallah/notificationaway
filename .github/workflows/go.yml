@@ -30,6 +30,6 @@ jobs:
     - name: update permissions
       run: chmod 775 ./bin/app
     - name: run
-      run: go run ./bin/app 
+      run: go run ./main.go
     - name: Test
       run: make test
