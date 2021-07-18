@@ -31,5 +31,8 @@ jobs:
         chmod +x ./bin/app
     - name: run
       run:  ./bin/app &
-    - name: Test
-      run: make test
+    - name: test
+      run: |
+        cd test
+        go build -o test
+        ./test
