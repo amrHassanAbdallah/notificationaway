@@ -184,7 +184,7 @@ func main() {
 			if strings.Contains(KafkaBroker, ",") {
 				kbrokers = strings.Split(KafkaBroker, ",")
 			} else {
-				kbrokers = append(kbrokers, DBHost)
+				kbrokers = append(kbrokers, KafkaBroker)
 			}
 			kafkaReader := &consumer.KafkaHandler{Reader: kafka.NewReader(kafka.ReaderConfig{
 				Brokers:     kbrokers,
