@@ -47,7 +47,7 @@ jobs:
         ls -l ./
         chmod +x ./bin/app
     - name: run
-      run:  ./bin/app
+      run:  ./bin/app > /dev/null 2>&1 &
     - name: test
       run: |
         cd test
