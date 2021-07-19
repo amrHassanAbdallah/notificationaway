@@ -14,7 +14,22 @@ jobs:
         image: mongo
         ports:
           - 27017/tcp
-        
+      zookeeper:
+        image: confluentinc/cp-zookeeper:5.5.0
+        env:
+          ZOOKEEPER_CLIENT_PORT: 2181
+        ports:
+          - 2181/tcp
+      kafka:
+        image: confluentinc/cp-kafka:5.5.0
+        ports:
+          - 9092/tcp
+        env:
+          KAFKA_BROKER_ID: 1
+          KAFKA_ZOOKEEPER_CONNECT: localhost:2181
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
     steps:
     - uses: actions/checkout@v2
 

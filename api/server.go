@@ -75,12 +75,28 @@ func MapMessageToResponse(b *persistence.Message) MessageResponse {
 	}
 }
 
-func (s server) TriggerMessage(w http.ResponseWriter, r *http.Request) {
-	panic("implement me")
-}
-
 func (s server) GetMessage(w http.ResponseWriter, r *http.Request, messageId string) {
-	panic("implement me")
+	ctx := r.Context()
+	m, err := s.NotificationawayService.GetMessage(ctx, messageId)
+	if err != nil {
+		switch err.(type) {
+		case *persistence.ErrRecordNotFound:
+			HandleError(w, r, &service.ServiceError{
+				Cause: err,
+				Type:  http.StatusNotFound,
+			})
+		default:
+			HandleError(w, r, &service.ServiceError{
+				Cause: err,
+				Type:  http.StatusInternalServerError,
+			})
+		}
+		return
+	}
+
+	render.Status(r, http.StatusOK)
+	render.JSON(w, r, MapMessageToResponse(m))
+	return
 }
 
 func NewServer(svc *service.Service) ServerInterfaceGlobal {

@@ -50,20 +50,6 @@ components:
         - type
         - language
         - provider_type
-    TriggerMessage:
-      properties:
-        message_type:
-          type: string
-          minLength: 5
-          maxLength: 256
-          description: message type
-        users_ids:
-          type: array
-          items:
-            type: string
-      required:
-        - users_ids
-        - message_type
     MessageResponse:
       allOf:
         - $ref: '#/components/schemas/NewMessage'
@@ -156,44 +142,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/NewMessage'
-      responses:
-        '201':
-          description: Message created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageResponse'
-        '409':
-          description: user write conflict
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '400':
-          description: bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /messages/trigger:
-    post:
-      summary: trigger messages manually
-      description: used to trigger messages for certin users manually
-      operationId: triggerMessage
-      requestBody:
-        description: Message to be added
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TriggerMessage'
       responses:
         '201':
           description: Message created

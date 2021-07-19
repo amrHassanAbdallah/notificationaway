@@ -50,25 +50,11 @@ type NewMessage struct {
 	Type string `json:"type"`
 }
 
-// TriggerMessage defines model for TriggerMessage.
-type TriggerMessage struct {
-
-	// message type
-	MessageType string   `json:"message_type"`
-	UsersIds    []string `json:"users_ids"`
-}
-
 // AddMessageJSONBody defines parameters for AddMessage.
 type AddMessageJSONBody NewMessage
 
-// TriggerMessageJSONBody defines parameters for TriggerMessage.
-type TriggerMessageJSONBody TriggerMessage
-
 // AddMessageRequestBody defines body for AddMessage for application/json ContentType.
 type AddMessageJSONRequestBody AddMessageJSONBody
-
-// TriggerMessageRequestBody defines body for TriggerMessage for application/json ContentType.
-type TriggerMessageJSONRequestBody TriggerMessageJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -148,11 +134,6 @@ type ClientInterface interface {
 
 	AddMessage(ctx context.Context, body AddMessageJSONRequestBody) (*http.Response, error)
 
-	// TriggerMessage request  with any body
-	TriggerMessageWithBody(ctx context.Context, contentType string, body io.Reader) (*http.Response, error)
-
-	TriggerMessage(ctx context.Context, body TriggerMessageJSONRequestBody) (*http.Response, error)
-
 	// GetMessage request
 	GetMessage(ctx context.Context, messageId string) (*http.Response, error)
 }
@@ -174,36 +155,6 @@ func (c *Client) AddMessageWithBody(ctx context.Context, contentType string, bod
 
 func (c *Client) AddMessage(ctx context.Context, body AddMessageJSONRequestBody) (*http.Response, error) {
 	req, err := NewAddMessageRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if c.RequestEditor != nil {
-		err = c.RequestEditor(ctx, req)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) TriggerMessageWithBody(ctx context.Context, contentType string, body io.Reader) (*http.Response, error) {
-	req, err := NewTriggerMessageRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if c.RequestEditor != nil {
-		err = c.RequestEditor(ctx, req)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) TriggerMessage(ctx context.Context, body TriggerMessageJSONRequestBody) (*http.Response, error) {
-	req, err := NewTriggerMessageRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -253,45 +204,6 @@ func NewAddMessageRequestWithBody(server string, contentType string, body io.Rea
 	}
 
 	basePath := fmt.Sprintf("/messages")
-	if basePath[0] == '/' {
-		basePath = basePath[1:]
-	}
-
-	queryUrl, err = queryUrl.Parse(basePath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryUrl.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-	return req, nil
-}
-
-// NewTriggerMessageRequest calls the generic TriggerMessage builder with application/json body
-func NewTriggerMessageRequest(server string, body TriggerMessageJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewTriggerMessageRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewTriggerMessageRequestWithBody generates requests for TriggerMessage with any type of body
-func NewTriggerMessageRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryUrl, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	basePath := fmt.Sprintf("/messages/trigger")
 	if basePath[0] == '/' {
 		basePath = basePath[1:]
 	}
@@ -378,11 +290,6 @@ type ClientWithResponsesInterface interface {
 
 	AddMessageWithResponse(ctx context.Context, body AddMessageJSONRequestBody) (*AddMessageResponse, error)
 
-	// TriggerMessage request  with any body
-	TriggerMessageWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader) (*TriggerMessageResponse, error)
-
-	TriggerMessageWithResponse(ctx context.Context, body TriggerMessageJSONRequestBody) (*TriggerMessageResponse, error)
-
 	// GetMessage request
 	GetMessageWithResponse(ctx context.Context, messageId string) (*GetMessageResponse, error)
 }
@@ -406,31 +313,6 @@ func (r AddMessageResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r AddMessageResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type TriggerMessageResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *MessageResponse
-	JSON400      *Error
-	JSON409      *Error
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r TriggerMessageResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r TriggerMessageResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -479,23 +361,6 @@ func (c *ClientWithResponses) AddMessageWithResponse(ctx context.Context, body A
 	return ParseAddMessageResponse(rsp)
 }
 
-// TriggerMessageWithBodyWithResponse request with arbitrary body returning *TriggerMessageResponse
-func (c *ClientWithResponses) TriggerMessageWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader) (*TriggerMessageResponse, error) {
-	rsp, err := c.TriggerMessageWithBody(ctx, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	return ParseTriggerMessageResponse(rsp)
-}
-
-func (c *ClientWithResponses) TriggerMessageWithResponse(ctx context.Context, body TriggerMessageJSONRequestBody) (*TriggerMessageResponse, error) {
-	rsp, err := c.TriggerMessage(ctx, body)
-	if err != nil {
-		return nil, err
-	}
-	return ParseTriggerMessageResponse(rsp)
-}
-
 // GetMessageWithResponse request returning *GetMessageResponse
 func (c *ClientWithResponses) GetMessageWithResponse(ctx context.Context, messageId string) (*GetMessageResponse, error) {
 	rsp, err := c.GetMessage(ctx, messageId)
@@ -514,53 +379,6 @@ func ParseAddMessageResponse(rsp *http.Response) (*AddMessageResponse, error) {
 	}
 
 	response := &AddMessageResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest MessageResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON409 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseTriggerMessageResponse parses an HTTP response from a TriggerMessageWithResponse call
-func ParseTriggerMessageResponse(rsp *http.Response) (*TriggerMessageResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer rsp.Body.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &TriggerMessageResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
