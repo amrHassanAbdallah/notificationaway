@@ -47,7 +47,7 @@ jobs:
         ls -l ./
         chmod +x ./bin/app
     - name: run
-      run:  ./bin/app --mongo-dsn=mongodb://mongo:27017
+      run:  ./bin/app
     - name: test
       run: |
         cd test
