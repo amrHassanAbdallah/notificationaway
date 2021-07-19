@@ -1,3 +1,5 @@
+[![Go](https://github.com/amrHassanAbdallah/notificationaway/actions/workflows/go.yml/badge.svg)](https://github.com/amrHassanAbdallah/notificationaway/actions/workflows/go.yml)
+
 # Notificationaway
 > Sending notifications to your users supporting different messages languages and different sending interfaces such as push notifications, sms, webhook. 
 
@@ -45,7 +47,7 @@ You can run the test/test.go that would do all of that to you.
 * [ ] Add unit tests
 * [ ] Handle message with templates keys
 * [ ] Add HTTP logger
-* [ ] Add CI/CD to run the test/test file after every commit (almost done)
+* [x] Add CI/CD to run the test/test file after every commit (almost done)
 * [ ] Add a circuit breaker over the third party notifications sender providers
 
 
