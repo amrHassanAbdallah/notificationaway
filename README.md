@@ -24,6 +24,14 @@
 Use this [file](https://github.com/amrHassanAbdallah/notificationaway/blob/master/api/api.yml) content and paste it inside this [viewer](https://editor.swagger.io/)
 
 
+### How to use
+1. Create a message through the API
+2. Publish a message into the `notifications` topic with the expected payload (type, to, language), make sure that the type and language match a message you already created in order to complete the whole cycle
+3. if the type is webhook, you will get a message over that webhook, otherwise are dummy adapter the consumer will consume the message and ignore it.
+**Or**
+You can run the test/test.go that would do all of that to you.
+
+
 ## Features
 * [x] Add a message
 * [x] Consume notification
@@ -38,5 +46,7 @@ Use this [file](https://github.com/amrHassanAbdallah/notificationaway/blob/maste
 * [ ] Add a circuit breaker over the third party notifications sender providers
 
 
-Maybe will add more depending on this [design document]()
+## Architecture
+![Blank diagram](https://user-images.githubusercontent.com/15635708/126164351-e290f676-6886-4ffc-9a9c-3a347b0c62f7.png)
+More details in [design document](https://drive.google.com/file/d/11mnoDKF4rNicQAYUzmcNaiIbpKJ5doZo/view?usp=sharing)
   
