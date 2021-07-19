@@ -48,7 +48,7 @@ jobs:
         ls -l ./
         chmod +x ./bin/app
     - name: run
-      run:  ./bin/app --kafka-brokers=127.0.0.1:9092
+      run:  ./bin/app --kafka-brokers=0.0.0.0:9092
     - name: test
       run: |
         cd test
