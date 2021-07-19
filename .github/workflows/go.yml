@@ -13,17 +13,17 @@ jobs:
       mongo:
         image: mongo
         ports:
-          - 27017/27017
+          - 27017:27017
       zookeeper:
         image: confluentinc/cp-zookeeper:5.5.0
         env:
           ZOOKEEPER_CLIENT_PORT: 2181
         ports:
-          - 2181/2181
+          - 2181:2181
       kafka:
         image: confluentinc/cp-kafka:5.5.0
         ports:
-          - 9092/9092
+          - 9092:9092
         env:
           KAFKA_BROKER_ID: 1
           KAFKA_ZOOKEEPER_CONNECT: localhost:2181
@@ -47,7 +47,7 @@ jobs:
         ls -l ./
         chmod +x ./bin/app
     - name: run
-      run:  ./bin/app --mongo-dsn=mongodb://mongo:27017 &
+      run:  ./bin/app --mongo-dsn=mongodb://mongo:27017
     - name: test
       run: |
         cd test
