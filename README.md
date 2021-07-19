@@ -28,7 +28,10 @@ Use this [file](https://github.com/amrHassanAbdallah/notificationaway/blob/maste
 1. Create a message through the API
 2. Publish a message into the `notifications` topic with the expected payload (type, to, language), make sure that the type and language match a message you already created in order to complete the whole cycle
 3. if the type is webhook, you will get a message over that webhook, otherwise are dummy adapter the consumer will consume the message and ignore it.
+
+
 **Or**
+
 You can run the test/test.go that would do all of that to you.
 
 
