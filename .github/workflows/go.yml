@@ -18,8 +18,6 @@ jobs:
         image: confluentinc/cp-zookeeper:5.5.0
         env:
           ZOOKEEPER_CLIENT_PORT: 2181
-        ports:
-          - 2181:2181
       kafka:
         image: confluentinc/cp-kafka:5.5.0
         ports:
@@ -27,7 +25,7 @@ jobs:
         env:
           KAFKA_BROKER_ID: 1
           KAFKA_ZOOKEEPER_CONNECT: localhost:2181
-          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,LISTENER_EXTERN://0.0.0.0:9092
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
     steps:
@@ -47,7 +45,7 @@ jobs:
         ls -l ./
         chmod +x ./bin/app
     - name: run
-      run:  ./bin/app --kafka-brokers=0.0.0.0:9092
+      run:  ./bin/app --kafka-brokers=localhost:9092
     - name: test
       run: |
         cd test
