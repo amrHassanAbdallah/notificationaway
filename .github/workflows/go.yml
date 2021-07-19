@@ -27,7 +27,8 @@ jobs:
         env:
           KAFKA_BROKER_ID: 1
           KAFKA_ZOOKEEPER_CONNECT: localhost:2181
-          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_ADVERTISED_LISTENERS: LISTENER_INTERN://kafka:9093,LISTENER_EXTERN://127.0.0.1:9092,PLAINTEXT://localhost:9092
+          KAFKA_LISTENERS: LISTENER_INTERN://kafka:9093,LISTENER_EXTERN://0.0.0.0:9092,PLAINTEXT://localhost:9092
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
     steps:
@@ -47,7 +48,7 @@ jobs:
         ls -l ./
         chmod +x ./bin/app
     - name: run
-      run:  ./bin/app > /dev/null 2>&1 &
+      run:  ./bin/app &
     - name: test
       run: |
         cd test
